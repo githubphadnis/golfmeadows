@@ -1,34 +1,102 @@
-graph TD
-    %% Define Styles
-    classDef live stroke:#22c55e,stroke-width:2px,fill:#f0fdf4,color:#166534;
-    classDef future stroke:#94a3b8,stroke-width:2px,stroke-dasharray: 5 5,fill:#f8fafc,color:#64748b;
-    classDef external stroke:#3b82f6,stroke-width:2px,fill:#eff6ff,color:#1e3a8a;
+## Golf Meadows Meeting Minutes - Phase 1 (Free Stack)
 
-    %% Nodes
-    User((User / Mobile)):::external
-    CF[Cloudflare Access<br>OTP / Zero Trust]:::live
-    GH[GitHub Actions CI/CD<br>Build & Publish]:::external
-    
-    subgraph Synology NAS / Portainer
-        Web[XTA Web Container<br>FastAPI / HTMX / Pandas]:::live
-        DB[(PostgreSQL 16<br>xta_prod_data)]:::live
-        LocalLLM[Local LLM Container<br>Ollama / Llama3]:::future
-    end
+This repository contains a practical **"build, not buy"** starter for housing-society meeting minutes.
 
-    OpenAI[OpenAI API<br>gpt-4o & Vision]:::external
-    Forex[Multi-Currency API]:::future
+The focus is on being:
 
-    %% Connections
-    User -->|HTTPS| CF
-    CF -->|Traffic routed to 8080| Web
-    GH -->|GitOps Webhook| Synology NAS / Portainer
-    
-    Web <-->|SQLAlchemy| DB
-    Web <-->|REST API| OpenAI
-    
-    %% Future Connections
-    Web -.->|Local Inference| LocalLLM
-    Web -.->|Forex Rates| Forex
-    
-    %% Styling note
-    classDef default font-family:sans-serif;
+- **Low cost** (no mandatory per-minute SaaS costs)
+- **Simple to run** (single command pipeline)
+- **Reliable enough for non-technical users**
+- **Human-reviewed** before circulation
+
+---
+
+## Why this Phase 1 approach
+
+Instead of a fragile fully autonomous "join Google Meet as a bot" system, this phase uses:
+
+1. A meeting recording (audio/video) as input
+2. Local transcription (Whisper via `faster-whisper`)
+3. Local summarization into formal minutes (Ollama LLM)
+4. A fixed, committee-friendly minutes template
+
+This avoids browser automation breakage, CAPTCHA/login issues, and high maintenance.
+
+---
+
+## Quick workflow
+
+1. Record the meeting (phone, laptop, or Meet recording download)
+2. Save media file to your machine
+3. Run:
+
+```bash
+./scripts/run_phase1.sh
+```
+
+4. Enter file path + meeting metadata
+5. Review generated minutes in `output/`
+6. Secretary makes final edits before sharing
+
+---
+
+## Folder layout
+
+```text
+docs/
+  PHASE1_FREE_STACK.md
+scripts/
+  phase1_pipeline.py
+  run_phase1.sh
+templates/
+  minutes_prompt.txt
+requirements.txt
+```
+
+---
+
+## Prerequisites
+
+- Python 3.10+
+- `ffmpeg`
+- Ollama running locally (`http://localhost:11434`)
+- A local Ollama model (example: `llama3.1:8b`)
+
+Install Python dependencies:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Install an Ollama model:
+
+```bash
+ollama pull llama3.1:8b
+```
+
+---
+
+## Run non-interactively (advanced)
+
+```bash
+python3 scripts/phase1_pipeline.py \
+  --input "/path/to/meeting.mp4" \
+  --society "Golf Meadows" \
+  --meeting-date "2026-03-24" \
+  --meeting-title "Monthly Managing Committee Meeting" \
+  --output-dir "./output"
+```
+
+---
+
+## Important note
+
+Generated minutes are a draft. Always do a human verification pass for:
+
+- names and attendance
+- decisions and action owners
+- deadlines and numbers
+
+See `docs/PHASE1_FREE_STACK.md` for full architecture, assumptions, risks, and "idiot-proof" operating model.
