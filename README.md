@@ -81,6 +81,30 @@ Try other themes:
 ADDA endpoint names/payloads can vary by onboarding scope. This app keeps path and auth configurable through `.env`.
 If ADDA returns schema errors, map their exact expected payload fields in `web/app.py` (`_build_work_order_payload`).
 
+### Docker + Portainer deployment (no local dev)
+
+For your preferred deployment style, this repo now includes:
+
+- `Dockerfile`
+- `docker-compose.yml`
+- `docs/DEPLOY_PORTAINER_CLOUDFLARE.md` (step-by-step)
+
+Quick run on server:
+
+```bash
+cp .env.example .env
+# edit .env with ADDA settings
+docker compose up -d --build
+```
+
+Then open:
+
+`http://<server-ip>:8080/?theme=classic`
+
+For domain publishing with Cloudflare Tunnel to `golfmedows.org`, follow:
+
+`docs/DEPLOY_PORTAINER_CLOUDFLARE.md`
+
 ---
 
 ## Project structure
@@ -97,5 +121,8 @@ web/
   app.py
   templates/index.html
 .env.example
+.gitignore
+Dockerfile
+docker-compose.yml
 requirements.txt
 ```
