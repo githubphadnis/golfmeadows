@@ -122,15 +122,18 @@ def _build_work_order_payload(
 def home(request: Request, theme: str = "classic") -> HTMLResponse:
     allowed = {"classic", "bold", "calm"}
     selected_theme = theme if theme in allowed else "classic"
-    return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "theme": selected_theme,
-            "message": None,
-            "error": None,
-        },
-    )
+    context = {
+        "request": request,
+        "theme": selected_theme,
+        "message": None,
+        "error": None,
+    }
+    # Starlette 1.0+ expects (request, name, context)
+    # Earlier versions accepted (name, context). Keep compatibility for both.
+    try:
+        return templates.TemplateResponse(request, "index.html", context)
+    except TypeError:
+        return templates.TemplateResponse("index.html", context)
 
 
 @app.post("/complaints", response_class=HTMLResponse)
@@ -190,12 +193,13 @@ def submit_complaint(
         message = None
         error = f"Unexpected integration error: {exc}"
 
-    return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "theme": selected_theme,
-            "message": message,
-            "error": error,
-        },
-    )
+    context = {
+        "request": request,
+        "theme": selected_theme,
+        "message": message,
+        "error": error,
+    }
+    try:
+        return templates.TemplateResponse(request, "index.html", context)
+    except TypeError:
+        return templates.TemplateResponse("index.html", context)
