@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  golfmeadows-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: golfmeadows-web
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
