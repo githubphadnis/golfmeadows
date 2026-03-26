@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="620" viewBox="0 0 1600 620">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="620" fill="url(#g1)"/>
+  <circle cx="1320" cy="120" r="160" fill="#34d399" opacity="0.2"/>
+  <circle cx="260" cy="560" r="220" fill="#60a5fa" opacity="0.18"/>
+  <text x="100" y="250" fill="#f8fafc" font-size="62" font-family="Segoe UI, Arial, sans-serif" font-weight="700">
+    Golf Meadows
+  </text>
+  <text x="100" y="320" fill="#dbeafe" font-size="34" font-family="Segoe UI, Arial, sans-serif">
+    Transparent governance. Better community living.
+  </text>
+</svg>

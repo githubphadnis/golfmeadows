@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Report an Issue | Golf Meadows{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Report an Issue</h2>
+  <p class="muted">Simple form for day-to-day issues. It is routed to ADDA work orders.</p>
+
+  <form action="/report-issue" method="post">
+    <input type="hidden" name="theme" value="{{ theme }}" />
+
+    <div class="form-row two">
+      <label>Resident Name
+        <input name="resident_name" required />
+      </label>
+      <label>Unit
+        <input name="unit" placeholder="A-203" required />
+      </label>
+    </div>
+
+    <div class="form-row two">
+      <label>Category
+        <select name="category" required>
+          <option value="Electrical">Electrical</option>
+          <option value="Plumbing">Plumbing</option>
+          <option value="Housekeeping">Housekeeping</option>
+          <option value="Security">Security</option>
+          <option value="Civil">Civil</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
+      <label>Priority
+        <select name="priority">
+          <option value="Low">Low</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="High">High</option>
+          <option value="Urgent">Urgent</option>
+        </select>
+      </label>
+    </div>
+
+    <label>Issue Description
+      <textarea name="description" placeholder="Describe the issue and exact location" required></textarea>
+    </label>
+
+    <details>
+      <summary>Optional contact details</summary>
+      <div class="form-row two" style="margin-top:10px;">
+        <label>Email
+          <input name="resident_email" type="email" />
+        </label>
+        <label>Phone
+          <input name="resident_phone" />
+        </label>
+      </div>
+      <div class="form-row two">
+        <label>Block
+          <input name="block" />
+        </label>
+        <label>Custom title (optional)
+          <input name="title" />
+        </label>
+      </div>
+    </details>
+
+    <button type="submit">Submit Issue</button>
+  </form>
+
+  {% if message %}
+  <div class="flash ok">{{ message }}</div>
+  {% endif %}
+  {% if error %}
+  <div class="flash err">{{ error }}</div>
+  {% endif %}
+</section>
+{% endblock %}

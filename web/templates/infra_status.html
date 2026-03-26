@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Infra Status | Golf Meadows{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Infrastructure Status</h2>
+  <p class="muted">Traffic-light overview of critical systems in the community.</p>
+</section>
+
+<section class="grid two">
+  {% for item in infra_items %}
+  <article class="card status-card">
+    <h3>{{ item.name }}</h3>
+    <p class="status-line">
+      <span class="traffic {{ item.status }}"></span>
+      <strong class="status-text">{{ item.status|upper }}</strong>
+    </p>
+    <p class="muted">{{ item.note }}</p>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

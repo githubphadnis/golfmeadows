@@ -7,6 +7,7 @@ from typing import Any, Dict
 import requests
 from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 try:
@@ -18,9 +19,27 @@ BASE_DIR = os.path.dirname(__file__)
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 app = FastAPI(title="Golf Meadows Web")
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
 if load_dotenv:
     load_dotenv(os.path.join(os.path.dirname(BASE_DIR), ".env"))
+
+THEMES = {"classic", "bold", "calm"}
+CAROUSEL_IMAGES = [
+    "/static/images/hero-1.svg",
+    "/static/images/hero-2.svg",
+    "/static/images/hero-3.svg",
+]
+DOWNLOAD_ITEMS = [
+    {"name": "Society By-Laws (PDF)", "href": "#"},
+    {"name": "Resident Handbook", "href": "#"},
+    {"name": "Emergency Contacts Sheet", "href": "#"},
+]
+EVENTS = [
+    {"title": "Monthly Committee Meeting", "date": "First Sunday, 10:00 AM"},
+    {"title": "Community Clean-Up Drive", "date": "Second Saturday, 8:30 AM"},
+    {"title": "Kids Sports Evening", "date": "Last Friday, 6:00 PM"},
+]
 
 
 def _clean_slashes(value: str | None) -> str:
@@ -118,6 +137,125 @@ def _build_work_order_payload(
     }
 
 
+def _theme_or_default(theme: str) -> str:
+    return theme if theme in THEMES else "classic"
+
+
+def _render(request: Request, template_name: str, context: Dict[str, Any]) -> HTMLResponse:
+    payload = {"request": request, **context}
+    # Starlette 1.0+ expects (request, name, context)
+    # Earlier versions accepted (name, context). Keep compatibility for both.
+    try:
+        return templates.TemplateResponse(request, template_name, payload)
+    except TypeError:
+        return templates.TemplateResponse(template_name, payload)
+
+
+def _infra_status_data() -> list[Dict[str, str]]:
+    return [
+        {"name": "Lifts", "status": os.getenv("INFRA_LIFTS_STATUS", "green"), "note": "Operational"},
+        {"name": "Water Supply", "status": os.getenv("INFRA_WATER_STATUS", "green"), "note": "Normal pressure"},
+        {"name": "Electricity", "status": os.getenv("INFRA_POWER_STATUS", "amber"), "note": "DG backup on standby"},
+        {"name": "Security Systems", "status": os.getenv("INFRA_SECURITY_STATUS", "green"), "note": "All gates monitored"},
+        {"name": "STP / Drainage", "status": os.getenv("INFRA_STP_STATUS", "red"), "note": "Maintenance in progress"},
+    ]
+
+
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request, theme: str = "classic") -> HTMLResponse:
+    selected_theme = _theme_or_default(theme)
+    return _render(
+        request,
+        "home.html",
+        {
+            "theme": selected_theme,
+            "page": "home",
+            "carousel_images": CAROUSEL_IMAGES,
+        },
+    )
+
+
+@app.get("/downloads", response_class=HTMLResponse)
+def downloads(request: Request, theme: str = "classic") -> HTMLResponse:
+    return _render(
+        request,
+        "downloads.html",
+        {
+            "theme": _theme_or_default(theme),
+            "page": "downloads",
+            "download_items": DOWNLOAD_ITEMS,
+        },
+    )
+
+
+@app.get("/feedback", response_class=HTMLResponse)
+def feedback(request: Request, theme: str = "classic") -> HTMLResponse:
+    return _render(
+        request,
+        "feedback.html",
+        {
+            "theme": _theme_or_default(theme),
+            "page": "feedback",
+            "message": None,
+        },
+    )
+
+
+@app.post("/feedback", response_class=HTMLResponse)
+def submit_feedback(
+    request: Request,
+    theme: str = Form("classic"),
+    resident_name: str = Form(...),
+    unit: str = Form(...),
+    feedback_text: str = Form(...),
+) -> HTMLResponse:
+    # Phase 1: keep feedback lightweight without persistence.
+    _ = (resident_name, unit, feedback_text)
+    return _render(
+        request,
+        "feedback.html",
+        {
+            "theme": _theme_or_default(theme),
+            "page": "feedback",
+            "message": "Thank you. Your feedback has been recorded for committee review.",
+        },
+    )
+
+
+@app.get("/events", response_class=HTMLResponse)
+def events(request: Request, theme: str = "classic") -> HTMLResponse:
+    return _render(
+        request,
+        "events.html",
+        {
+            "theme": _theme_or_default(theme),
+            "page": "events",
+            "events": EVENTS,
+        },
+    )
+
+
+@app.get("/infra-status", response_class=HTMLResponse)
+def infra_status(request: Request, theme: str = "classic") -> HTMLResponse:
+    return _render(
+        request,
+        "infra_status.html",
+        {
+            "theme": _theme_or_default(theme),
+            "page": "infra-status",
+            "infra_items": _infra_status_data(),
+        },
+    )
+
+
+@app.get("/report-issue", response_class=HTMLResponse)
+def report_issue(request: Request, theme: str = "classic") -> HTMLResponse:
+    return _render(
+        request,
+        "report_issue.html",
+        {
+            "theme": _theme_or_default(theme),
+            "page": "report-issue",
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request, theme: str = "classic") -> HTMLResponse:
     allowed = {"classic", "bold", "calm"}
@@ -133,6 +271,22 @@ def home(request: Request, theme: str = "classic") -> HTMLResponse:
     )
 
 
+@app.post("/report-issue", response_class=HTMLResponse)
+def submit_issue(
+    request: Request,
+    theme: str = Form("classic"),
+    resident_name: str = Form(...),
+    unit: str = Form(...),
+    category: str = Form(...),
+    description: str = Form(...),
+    resident_email: str = Form(""),
+    resident_phone: str = Form(""),
+    block: str = Form(""),
+    priority: str = Form("Medium"),
+    title: str = Form(""),
+) -> HTMLResponse:
+    selected_theme = _theme_or_default(theme)
+    normalized_title = title.strip() or f"{category} issue in unit {unit}"
 @app.post("/complaints", response_class=HTMLResponse)
 def submit_complaint(
     request: Request,
@@ -159,6 +313,7 @@ def submit_complaint(
             unit=unit,
             category=category,
             priority=priority,
+            title=normalized_title,
             title=title,
             description=description,
         )
@@ -178,6 +333,7 @@ def submit_complaint(
         response.raise_for_status()
         body = response.json()
         reference = body.get("work_order_id") or body.get("id") or "Submitted"
+        message = f"Issue submitted. Reference: {reference}"
         message = f"Complaint submitted to ADDA. Reference: {reference}"
         error = None
     except HTTPException as exc:
@@ -185,11 +341,18 @@ def submit_complaint(
         error = exc.detail
     except requests.RequestException as exc:
         message = None
+        error = f"Failed to send issue to ADDA: {exc}"
         error = f"Failed to send complaint to ADDA: {exc}"
     except Exception as exc:  # safety for schema mismatch during first integration
         message = None
         error = f"Unexpected integration error: {exc}"
 
+    return _render(
+        request,
+        "report_issue.html",
+        {
+            "theme": selected_theme,
+            "page": "report-issue",
     return templates.TemplateResponse(
         "index.html",
         {
@@ -198,4 +361,34 @@ def submit_complaint(
             "message": message,
             "error": error,
         },
+    )
+
+
+@app.post("/complaints", response_class=HTMLResponse)
+def submit_complaint_compat(
+    request: Request,
+    theme: str = Form("classic"),
+    resident_name: str = Form(...),
+    resident_email: str = Form(""),
+    resident_phone: str = Form(""),
+    block: str = Form(""),
+    unit: str = Form(...),
+    category: str = Form(...),
+    priority: str = Form("Medium"),
+    title: str = Form(""),
+    description: str = Form(...),
+) -> HTMLResponse:
+    # Backward-compat alias for old form action.
+    return submit_issue(
+        request=request,
+        theme=theme,
+        resident_name=resident_name,
+        unit=unit,
+        category=category,
+        description=description,
+        resident_email=resident_email,
+        resident_phone=resident_phone,
+        block=block,
+        priority=priority,
+        title=title,
     )
