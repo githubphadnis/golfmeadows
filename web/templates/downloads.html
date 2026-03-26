@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Downloads | Golf Meadows{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Downloads</h2>
+  <p class="muted">Important society documents in one place.</p>
+  <ul class="list">
+    {% for item in download_items %}
+    <li>
+      <a href="{{ item.href }}">{{ item.name }}</a>
+      <span class="muted">Coming soon</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

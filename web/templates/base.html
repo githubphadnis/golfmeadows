@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Golf Meadows{% endblock %}</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #16213a;
+      --text: #eff4ff;
+      --muted: #bfccf0;
+      --accent: #60a5fa;
+      --accent-2: #34d399;
+      --border: #334a7a;
+      --danger: #dc2626;
+      --ok: #15803d;
+      --amber: #f59e0b;
+      --radius: 14px;
+    }
+
+    body.theme-bold {
+      --bg: #161616;
+      --card: #212121;
+      --text: #fffaf0;
+      --muted: #ffdca8;
+      --accent: #ff8c42;
+      --accent-2: #ffd166;
+      --border: #4f3e2f;
+      --danger: #ef4444;
+      --ok: #84cc16;
+      --amber: #f59e0b;
+    }
+
+    body.theme-calm {
+      --bg: #f4f8fb;
+      --card: #ffffff;
+      --text: #233048;
+      --muted: #64748b;
+      --accent: #2f7de1;
+      --accent-2: #2bb7a8;
+      --border: #d8e2f0;
+      --danger: #b42318;
+      --ok: #15803d;
+      --amber: #d97706;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top right, rgba(94,162,255,0.17), transparent 36%),
+        radial-gradient(circle at top left, rgba(126,240,192,0.14), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(1120px, 92vw);
+      margin: 20px auto 52px;
+    }
+
+    header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: 0.3px;
+    }
+
+    .theme-links a {
+      text-decoration: none;
+      font-size: 0.86rem;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 6px 10px;
+      margin-left: 6px;
+    }
+
+    .theme-links a.active { border-color: var(--accent); }
+
+    nav {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+    }
+
+    nav a.active {
+      border-color: var(--accent);
+      box-shadow: inset 0 0 0 1px var(--accent);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    h2, h3 { margin-top: 0; }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 900px) {
+      .grid.two {
+        grid-template-columns: 1fr 1fr;
+      }
+      .grid.three {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .small, .muted, .subtle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    input, select, textarea, button {
+      font: inherit;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    form {
+      display: grid;
+      gap: 10px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 700px) {
+      .form-row.two {
+        grid-template-columns: 1fr 1fr;
+      }
+      .form-row.three {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+
+    input, select, textarea {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 10px 11px;
+    }
+
+    textarea { min-height: 110px; resize: vertical; }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+      color: #061228;
+      font-weight: 700;
+      padding: 11px 14px;
+      cursor: pointer;
+    }
+
+    .flash {
+      margin-top: 10px;
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid transparent;
+      font-size: 0.92rem;
+    }
+    .flash.ok { color: var(--ok); border-color: rgba(21,128,61,0.35); background: rgba(22,163,74,0.08); }
+    .flash.err { color: var(--danger); border-color: rgba(220,38,38,0.35); background: rgba(239,68,68,0.08); }
+
+    .status-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .status-green { background: #22c55e; }
+    .status-amber { background: #f59e0b; }
+    .status-red { background: #ef4444; }
+
+    .carousel {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #000;
+      aspect-ratio: 16 / 6;
+    }
+    .carousel img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+    }
+    .carousel img.active {
+      opacity: 1;
+    }
+
+    .hero {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .hero h2 {
+      margin: 0;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+    }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      max-width: 70ch;
+    }
+
+    .cards-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 900px) {
+      .cards-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      padding: 16px;
+      display: block;
+    }
+    .card-link h3 {
+      margin: 0 0 8px;
+    }
+    .card-link:hover {
+      border-color: var(--accent);
+    }
+
+    .list {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 10px;
+    }
+    .list a {
+      color: var(--text);
+    }
+
+    .status-card {
+      margin-bottom: 0;
+    }
+    .status-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 8px;
+    }
+
+    .traffic {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .traffic.green { background: #22c55e; }
+    .traffic.amber { background: #f59e0b; }
+    .traffic.red { background: #ef4444; }
+
+    .event-list {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body class="theme-{{ theme }}">
+  <main class="container">
+    <header>
+      <div class="brand">
+        <h1>Golf Meadows Society</h1>
+        <div class="theme-links">
+          <a href="?theme=classic" class="{% if theme == 'classic' %}active{% endif %}">Classic</a>
+          <a href="?theme=bold" class="{% if theme == 'bold' %}active{% endif %}">Bold</a>
+          <a href="?theme=calm" class="{% if theme == 'calm' %}active{% endif %}">Calm</a>
+        </div>
+      </div>
+      <nav>
+        <a href="/?theme={{ theme }}" class="{% if page == 'home' %}active{% endif %}">Home</a>
+        <a href="/downloads?theme={{ theme }}" class="{% if page == 'downloads' %}active{% endif %}">Downloads</a>
+        <a href="/report-issue?theme={{ theme }}" class="{% if page == 'report-issue' %}active{% endif %}">Report an Issue</a>
+        <a href="/feedback?theme={{ theme }}" class="{% if page == 'feedback' %}active{% endif %}">Feedback</a>
+        <a href="/events?theme={{ theme }}" class="{% if page == 'events' %}active{% endif %}">Events</a>
+        <a href="/infra-status?theme={{ theme }}" class="{% if page == 'infra-status' %}active{% endif %}">Infra Status</a>
+      </nav>
+    </header>
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

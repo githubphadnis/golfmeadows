@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Feedback | Golf Meadows{% endblock %}
+{% block content %}
+<section class="card">
+  <h2>Resident Feedback</h2>
+  <p class="subtitle">
+    Share suggestions to improve safety, quality of life, and service experience in the community.
+  </p>
+  <form action="/feedback" method="post">
+    <input type="hidden" name="theme" value="{{ theme }}" />
+    <div class="form-row two">
+      <label>Name
+        <input name="resident_name" required />
+      </label>
+      <label>Unit
+        <input name="unit" required />
+      </label>
+    </div>
+    <label>Feedback
+      <textarea name="feedback_text" required placeholder="Share your suggestion or concern"></textarea>
+    </label>
+    <button type="submit">Submit Feedback</button>
+  </form>
+  {% if message %}
+  <div class="flash ok">{{ message }}</div>
+  {% endif %}
+</section>
+{% endblock %}

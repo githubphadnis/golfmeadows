@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="t d">
+  <title id="t">Garden promenade</title>
+  <desc id="d">Children playing area and green garden inside a housing society.</desc>
+  <defs>
+    <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8ec5ff"/>
+      <stop offset="100%" stop-color="#d9f7ff"/>
+    </linearGradient>
+    <linearGradient id="grass2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#58c786"/>
+      <stop offset="100%" stop-color="#2f945f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="520" fill="url(#sky2)"/>
+  <rect y="320" width="1200" height="200" fill="url(#grass2)"/>
+  <ellipse cx="220" cy="120" rx="90" ry="40" fill="#ffffff" opacity="0.85"/>
+  <ellipse cx="300" cy="100" rx="80" ry="36" fill="#ffffff" opacity="0.75"/>
+  <ellipse cx="980" cy="110" rx="92" ry="40" fill="#ffffff" opacity="0.82"/>
+  <rect x="80" y="300" width="1000" height="70" rx="34" fill="#f4e4c3"/>
+  <circle cx="980" cy="120" r="36" fill="#ffd54f"/>
+  <g transform="translate(210,210)">
+    <rect x="0" y="50" width="200" height="150" fill="#f3f6f8" stroke="#8490a6"/>
+    <polygon points="0,50 100,0 200,50" fill="#d5655f"/>
+    <rect x="80" y="120" width="40" height="80" fill="#8a5c3b"/>
+    <rect x="20" y="90" width="35" height="35" fill="#8fc8ff"/>
+    <rect x="145" y="90" width="35" height="35" fill="#8fc8ff"/>
+  </g>
+  <g transform="translate(760,215)">
+    <rect x="0" y="45" width="210" height="160" fill="#ecf0f4" stroke="#8490a6"/>
+    <polygon points="0,45 105,-5 210,45" fill="#d5655f"/>
+    <rect x="88" y="125" width="36" height="80" fill="#8a5c3b"/>
+    <rect x="25" y="92" width="34" height="34" fill="#8fc8ff"/>
+    <rect x="151" y="92" width="34" height="34" fill="#8fc8ff"/>
+  </g>
+  <g transform="translate(530,285)">
+    <rect x="0" y="0" width="145" height="8" fill="#6d4c41"/>
+    <rect x="8" y="8" width="8" height="32" fill="#6d4c41"/>
+    <rect x="129" y="8" width="8" height="32" fill="#6d4c41"/>
+    <rect x="20" y="10" width="105" height="8" fill="#8d6e63"/>
+  </g>
+  <text x="40" y="62" font-family="Segoe UI, Arial, sans-serif" font-size="32" fill="#143b56" font-weight="600">
+    Community Events and Shared Spaces
+  </text>
+</svg>

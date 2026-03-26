@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Events | Golf Meadows{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Community Events</h2>
+  <p class="subtle">
+    Upcoming activities and committee meetings.
+  </p>
+</div>
+
+<div class="card">
+  <ul class="event-list">
+    {% for item in events %}
+    <li>
+      <strong>{{ item.title }}</strong><br />
+      <span class="subtle">{{ item.date }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

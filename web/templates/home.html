@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Home | Golf Meadows{% endblock %}
+{% block content %}
+<section class="hero card">
+  <div>
+    <h2>Welcome to Golf Meadows</h2>
+    <p class="subtitle">
+      One place for notices, downloads, issue reporting, feedback, events, and quick
+      infrastructure visibility.
+    </p>
+  </div>
+
+  <div class="carousel" data-carousel>
+    {% for image in carousel_images %}
+    <img src="{{ image }}" alt="Golf Meadows highlight {{ loop.index }}" class="{% if loop.first %}active{% endif %}" />
+    {% endfor %}
+  </div>
+</section>
+
+<section class="cards-grid">
+  <a class="card-link" href="/report-issue?theme={{ theme }}">
+    <h3>Report an Issue</h3>
+    <p class="small">Quickly register complaints for maintenance, safety, or utilities.</p>
+  </a>
+  <a class="card-link" href="/infra-status?theme={{ theme }}">
+    <h3>Infra Status</h3>
+    <p class="small">Traffic-light dashboard for lifts, water, power, and systems.</p>
+  </a>
+  <a class="card-link" href="/events?theme={{ theme }}">
+    <h3>Events</h3>
+    <p class="small">Upcoming meetings and community activities.</p>
+  </a>
+  <a class="card-link" href="/downloads?theme={{ theme }}">
+    <h3>Downloads</h3>
+    <p class="small">By-laws, forms, handbooks, and emergency references.</p>
+  </a>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    const carousel = document.querySelector("[data-carousel]");
+    if (!carousel) return;
+    const images = Array.from(carousel.querySelectorAll("img"));
+    if (images.length <= 1) return;
+    let idx = 0;
+    setInterval(() => {
+      images[idx].classList.remove("active");
+      idx = (idx + 1) % images.length;
+      images[idx].classList.add("active");
+    }, 3500);
+  })();
+</script>
+{% endblock %}
