@@ -256,15 +256,6 @@ def report_issue(request: Request, theme: str = "classic") -> HTMLResponse:
         {
             "theme": _theme_or_default(theme),
             "page": "report-issue",
-@app.get("/", response_class=HTMLResponse)
-def home(request: Request, theme: str = "classic") -> HTMLResponse:
-    allowed = {"classic", "bold", "calm"}
-    selected_theme = theme if theme in allowed else "classic"
-    return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "theme": selected_theme,
             "message": None,
             "error": None,
         },
@@ -287,22 +278,6 @@ def submit_issue(
 ) -> HTMLResponse:
     selected_theme = _theme_or_default(theme)
     normalized_title = title.strip() or f"{category} issue in unit {unit}"
-@app.post("/complaints", response_class=HTMLResponse)
-def submit_complaint(
-    request: Request,
-    theme: str = Form("classic"),
-    resident_name: str = Form(...),
-    resident_email: str = Form(...),
-    resident_phone: str = Form(...),
-    block: str = Form(...),
-    unit: str = Form(...),
-    category: str = Form(...),
-    priority: str = Form(...),
-    title: str = Form(...),
-    description: str = Form(...),
-) -> HTMLResponse:
-    allowed = {"classic", "bold", "calm"}
-    selected_theme = theme if theme in allowed else "classic"
 
     try:
         payload = _build_work_order_payload(
@@ -314,7 +289,6 @@ def submit_complaint(
             category=category,
             priority=priority,
             title=normalized_title,
-            title=title,
             description=description,
         )
 
@@ -334,7 +308,6 @@ def submit_complaint(
         body = response.json()
         reference = body.get("work_order_id") or body.get("id") or "Submitted"
         message = f"Issue submitted. Reference: {reference}"
-        message = f"Complaint submitted to ADDA. Reference: {reference}"
         error = None
     except HTTPException as exc:
         message = None
@@ -342,7 +315,6 @@ def submit_complaint(
     except requests.RequestException as exc:
         message = None
         error = f"Failed to send issue to ADDA: {exc}"
-        error = f"Failed to send complaint to ADDA: {exc}"
     except Exception as exc:  # safety for schema mismatch during first integration
         message = None
         error = f"Unexpected integration error: {exc}"
@@ -353,11 +325,6 @@ def submit_complaint(
         {
             "theme": selected_theme,
             "page": "report-issue",
-    return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "theme": selected_theme,
             "message": message,
             "error": error,
         },
